@@ -19,87 +19,87 @@ import { router } from "expo-router";
 const data = [
   {
     id: '1',
-    icon: require('@assets/tools/clienting.png'),
-    title: 'Clienting',
-    subtitle: 'Managing customer wishlist and creating orders',
-    navigation: '/tools/clienting',
+    icon: require('@assets/tools/barcode-scan.png'),
+    title: 'Scan & Track',
+    subtitle: 'Scan barcodes for quick inventory updates and tracking',
+    navigation: '/tools/scanner',
   },
   {
     id: '2',
-    icon: require('@assets/tools/cross-brand-recommendation.png'),
-    title: 'Cross Brand Recommendation',
-    subtitle: 'Intuitive and visual approach to product recommendations',
-    navigation: '/tools/crossBrandRecommendations',
+    icon: require('@assets/tools/inventory-adjust.png'),
+    title: 'Inventory Adjustment',
+    subtitle: 'Add, remove or adjust product quantities',
+    navigation: '/tools/adjustment',
   },
   {
     id: '3',
-    icon: require('@assets/tools/gift-advisory.png'),
-    title: 'Gift Advisory',
-    subtitle: 'Intuitive and visual approach to product recommendations',
-    navigation: '/tools/giftAdvisory',
+    icon: require('@assets/tools/location.png'),
+    title: 'Location Management',
+    subtitle: 'Manage warehouse locations and product placement',
+    navigation: '/tools/locations',
   },
   {
     id: '4',
-    icon: require('@assets/tools/customer-feedback.png'),
-    title: 'Customer Feedback',
-    subtitle: 'Collect feedback from your customers when they visit your store',
-    navigation: '/tools/customerFeedback',
+    icon: require('@assets/tools/stocktake.png'),
+    title: 'Stock Take',
+    subtitle: 'Conduct inventory counts and reconciliation',
+    navigation: '/tools/stocktake',
   },
   {
     id: '5',
-    icon: require('@assets/tools/manage-loyalty-programs.png'),
-    title: 'Manage Loyalty Programs',
-    subtitle: 'View and manage customer loyalty levels, benefits, and progress',
-    navigation: '/tools/loyaltyPrograms',
+    icon: require('@assets/tools/reports.png'),
+    title: 'Reports',
+    subtitle: 'View inventory reports and analytics',
+    navigation: '/tools/reports',
   },
   {
     id: '6',
-    icon: require('@assets/tools/family-account-link.png'),
-    title: 'Family Account Link',
-    subtitle: 'Connect & manage related customer accounts and loyalty rewards',
-    navigation: 'tools/familyAccounts',
+    icon: require('@assets/tools/movement.png'),
+    title: 'Stock Movement',
+    subtitle: 'Track and manage product transfers between locations',
+    navigation: '/tools/movement',
   },
   {
     id: '7',
-    icon: require('@assets/tools/competitor-pricing.png'),
-    title: 'Competitor Pricing',
-    subtitle: 'Compare your product prices based on real-time market data',
-    navigation: '/tools/competitorPricing',
+    icon: require('@assets/tools/import.png'),
+    title: 'Import Products',
+    subtitle: 'Bulk import products via CSV/Excel or brand API sync',
+    navigation: '/tools/import',
   },
   {
     id: '8',
-    icon: require('@assets/tools/omnichannel-orders.png'),
-    title: 'Omnichannel Orders',
-    subtitle: 'Manage and fulfill customer orders from multiple sales channels',
-    navigation: '/tools/omniChannelOrders',
-  },
+    icon: require('@assets/tools/settings.png'),
+    title: 'Settings',
+    subtitle: 'Configure warehouses, locations and app preferences',
+    navigation: '/tools/settings',
+  }
 ];
 
 const ToolsScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.content}>
-          {/* Title View */}
-          <Text style={styles.screenTopText}>Clienting tool at your disposal. Manage customer wishlist, orders and preferences on his/her behalf.</Text>
-          <View style={styles.lastUsedContainer}>
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={styles.content}>
+            <Text style={styles.screenTopText}>
+              Inventory management tools for scanning, tracking, and managing stock levels across locations.
+            </Text>
+            <View style={styles.lastUsedContainer}>
               <Text style={styles.lastUsedText}>
-              Last used: 20/02/2024 22:00
+                Last scan: 24/01/2024 14:30
               </Text>
-          </View>
+            </View>
 
-          {/* Tools List */}
-          <FlatList
-            scrollEnabled={false}
-            data={data}
-            renderItem={({ item }) => <ToolsScreenTabItem item={item} />}
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{gap: 18}}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <FlatList
+                scrollEnabled={false}
+                data={data}
+                renderItem={({ item }) => <ToolsScreenTabItem item={item} />}
+                keyExtractor={(item) => item.id}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{gap: 18}}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
   );
 };
 
