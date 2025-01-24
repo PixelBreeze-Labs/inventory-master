@@ -16,14 +16,15 @@
       "supportsTablet": true,
       "bundleIdentifier": "io.venueboost.inventory",
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to allow you to take photos for your profile picture.",
-        "NSPhotoLibraryUsageDescription": "This app accesses your photos to allow you to choose a profile picture.",
-        "NSRemoteNotificationUsageDescription": "We use notifications to keep you updated with important information about your tasks and schedule.",
+        "NSCameraUsageDescription": "Camera access is required for barcode scanning and product photos",
+        "NSPhotoLibraryUsageDescription": "Photo library access is needed to upload product images",
+        "NSRemoteNotificationUsageDescription": "Notifications for inventory updates and warehouse tasks",
+        "NSBarCodeScannerUsageDescription": "Barcode scanning for product identification",
+        "NSLocationWhenInUseUsageDescription": "Location tracking for warehouse navigation",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Location tracking for warehouse operations",
         "UIBackgroundModes": [
           "remote-notification"
-        ],
-        "NSLocationWhenInUseUsageDescription": "This app uses location services to show you where you are on the map.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses location services to show you where you are on the map."
+        ]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "entitlements": {
@@ -37,7 +38,10 @@
         "permissions": [
           "CAMERA",
           "READ_EXTERNAL_STORAGE",
-          "WRITE_EXTERNAL_STORAGE"
+          "WRITE_EXTERNAL_STORAGE",
+          "ACCESS_COARSE_LOCATION",
+          "ACCESS_FINE_LOCATION",
+          "VIBRATE"
         ]
       },
       "googleServicesFile": "./google-services.json",
@@ -50,6 +54,8 @@
     },
     "plugins": [
       "expo-router",
+      "expo-camera",
+      "expo-barcode-scanner",
       "@react-native-firebase/app",
       "@react-native-firebase/messaging",
       [
@@ -58,7 +64,9 @@
           "iosPermissions": [
             "LocationAccuracy",
             "LocationAlways",
-            "LocationWhenInUse"
+            "LocationWhenInUse",
+            "Camera",
+            "PhotoLibrary"
           ]
         }
       ]
