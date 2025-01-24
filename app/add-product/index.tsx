@@ -1,4 +1,4 @@
-a// app/scanner/add-product/index.tsx
+// app/scanner/add-product/index.tsx
 import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';

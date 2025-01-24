@@ -1,55 +1,99 @@
-// src/screens/Scanner.tsx
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
-import { Picker } from '@react-native-picker/picker';
+import { useScanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
 import { router } from 'expo-router';
 
 export default function Scanner() {
-    const [hasPermission, setHasPermission] = useState(null);
-    const [scanned, setScanned] = useState(false);
+    const [hasPermission, setHasPermission] = React.useState(false);
+    const devices = useCameraDevices();
+    const device = devices.back;
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            setHasPermission(status === 'granted');
-        })();
+    const [frameProcessor, barcodes] = useScanBarcodes([
+        BarcodeFormat.EAN_13,
+        BarcodeFormat.EAN_8,
+        BarcodeFormat.QR_CODE,
+    ]);
+
+    React.useEffect(() => {
+        checkPermission();
     }, []);
 
-    const handleBarCodeScanned = ({ data }) => {
-        setScanned(true);
+    React.useEffect(() => {
+        if (barcodes.length > 0) {
+            handleBarcodeScan(barcodes[0].displayValue);
+        }
+    }, [barcodes]);
+
+    const checkPermission = async () => {
+        const status = await Camera.requestCameraPermission();
+        setHasPermission(status === 'authorized');
+    };
+
+    const handleBarcodeScan = (data) => {
         router.push({
-            pathname: '/tools/scanner/add-product',
+            pathname: '/scanner/add-product',
             params: { sku: data }
         });
     };
 
-    if (hasPermission === null) {
-        return <Text>Requesting camera permission</Text>;
+    if (!hasPermission) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.text}>No camera permission</Text>
+            </View>
+        );
     }
-    if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
+
+    if (!device) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
     }
 
     return (
         <View style={styles.container}>
             <Camera
                 style={styles.camera}
-                type={Camera.Constants.Type.back}
-                barCodeScannerSettings={{
-                    barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
-                }}
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                device={device}
+                isActive={true}
+                frameProcessor={frameProcessor}
+                frameProcessorFps={5}
             />
-            {scanned && (
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => setScanned(false)}
-                >
-                    <Text style={styles.buttonText}>Scan Again</Text>
-                </TouchableOpacity>
-            )}
+            <View style={styles.overlay}>
+                <Text style={styles.scanText}>Point camera at barcode</Text>
+            </View>
         </View>
     );
 }
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#000',
+    },
+    camera: {
+        flex: 1,
+    },
+    overlay: {
+        position: 'absolute',
+        bottom: 50,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+    scanText: {
+        color: '#fff',
+        fontSize: 16,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 16,
+        borderRadius: 8,
+    },
+    text: {
+        color: '#fff',
+        textAlign: 'center',
+        margin: 16,
+    }
+});
