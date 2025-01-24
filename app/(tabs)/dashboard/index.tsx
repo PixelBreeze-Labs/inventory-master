@@ -1,357 +1,256 @@
-import {
-  FlatList,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React from "react";
+// screens/DashboardScreen.tsx
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
+import moment from 'moment';
 import { Color, FontFamily, FontSize } from "@/GlobalStyles";
-import { router, useNavigation } from "expo-router";
-import Svg, { Rect } from "react-native-svg";
-import SalesCharts from "@/components/SalesCharts";
-import { products } from "@/constants/collections";
-import TopPerfomingProducts from "./components/TopPerfomingProducts";
 
-const metricsData = [
+const dummyActivities = [
   {
-    id: "1",
-    title: "Total Sales",
-    value: "$45,678",
-    change: "12% from last week",
-    changePositive: true,
-    chart: [30, 40, 25, 35, 45, 40, 20, 40, 35],
+    id: '1',
+    type: 'stock_change',
+    product: 'Nike Air Max',
+    action: 'Added',
+    quantity: 50,
+    timestamp: new Date('2024-01-24T10:30:00'),
+    location: 'Warehouse A'
   },
   {
-    id: "2",
-    title: "Average Order Value",
-    value: "$250",
-    change: "3% from last week",
-    changePositive: false,
-    chart: [35, 30, 40, 25, 35, 45, 30, 20, 40],
+    id: '2',
+    type: 'location_change',
+    product: 'Adidas Ultra Boost',
+    action: 'Moved',
+    quantity: 20,
+    timestamp: new Date('2024-01-24T09:15:00'),
+    location: 'Warehouse B'
   },
   {
-    id: "3",
-    title: "Conversion Rate",
-    value: "3.5%",
-    change: "0.5% from last week",
-    changePositive: true,
-    chart: [40, 35, 25, 40, 30, 35, 45, 20, 30],
-  },
-  {
-    id: "4",
-    title: "New Customers",
-    value: "87",
-    change: "15% from last week",
-    changePositive: true,
-    chart: [30, 40, 35, 30, 45, 25, 40, 35, 20],
-  },
+    id: '3',
+    type: 'stock_change',
+    product: 'Puma RS-X',
+    action: 'Removed',
+    quantity: 5,
+    timestamp: new Date('2024-01-24T08:45:00'),
+    location: 'Warehouse A'
+  }
 ];
 
-const data = [
+const metrics = [
   {
-    id: "1",
-    icon: require("@assets/dashboard/products.png"),
-    title: "Products",
-    subtitle:
-      "Complete guide to the product inventory. Access detailed information for each product.",
-    navigation: "dashboard/products",
+    id: '1',
+    title: 'Total Products',
+    value: '2,345',
+    change: '+12%',
+    positive: true
   },
   {
-    id: "2",
-    icon: require("@assets/dashboard/customers.png"),
-    title: "Customers",
-    subtitle:
-      "Overview of customer profiles and interactions. Access details, view history, and manage relationships efficiently.",
-      navigation: "(tabs)/customers",
+    id: '2',
+    title: 'Low Stock Items',
+    value: '48',
+    change: '+5%',
+    positive: false
   },
   {
-    id: "3",
-    icon: require("@assets/dashboard/analysis.png"),
-    title: "Analysis",
-    subtitle:
-      "Insight into key business metrics and trends. Visualize data and track performance",
-    navigation: "dashboard/analysis",
-  },
+    id: '3',
+    title: 'Out of Stock',
+    value: '15',
+    change: '-3%',
+    positive: true
+  }
 ];
 
-const DashboardScreen = () => {
-  const navigation = useNavigation();
+const quickActions = [
+  {
+    id: '1',
+    title: 'Scan Product',
+    icon: '🔍',
+    route: '/scanner'
+  },
+  {
+    id: '2',
+    title: 'Add Product',
+    icon: '➕',
+    route: '/products/add'
+  },
+  {
+    id: '3',
+    title: 'Stock Take',
+    icon: '📋',
+    route: '/stock-take'
+  }
+];
 
-  navigation.setOptions({
-    headerTitle: "Home",
-  });
-
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* Options List */}
-        <FlatList
-          scrollEnabled={false}
-          data={data}
-          renderItem={({ item }) => <RenderItem item={item} />}
-          keyExtractor={(item) => item.id}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 14 }}
-          key={"1"}
-        />
-
-        {/* Key Metrics */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Key Metrics</Text>
-          <FlatList
-            data={metricsData}
-            scrollEnabled={false}
-            contentContainerStyle={{
-              gap: 14,
-            }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <MetricCard
-                key={item.id}
-                title={item.title}
-                value={item.value}
-                change={item.change}
-                changePositive={item.changePositive}
-                chart={item.chart}
-              />
-            )}
-          />
-        </View>
-
-        {/* Sales Charts */}
-        <SalesCharts />
-
-        {/* Top Performing Products */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Top Performing Products</Text>
-          <FlatList
-            data={products}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => (
-              <TopPerfomingProducts
-                item={item}
-                index={index}
-              />
-            )}
-            contentContainerStyle={{
-              borderWidth: 1,
-              borderColor: Color.modeBase200,
-              borderRadius: 10,
-              overflow: "hidden",
-              backgroundColor: Color.modeBase00,
-              padding: 10,
-            }}
-          />
-        </View>
-      </View>
-    </ScrollView>
-  );
-};
-
-const RenderItem = ({ item }: any) => {
-  return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => router.push(item.navigation)}
-    >
-      <View style={styles.iconContainer}>
-        <Image
-          style={styles.cardItemIcon}
-          resizeMode="contain"
-          source={item.icon}
-        />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.subtitle}>{item.subtitle}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const MetricCard = ({ title, value, change, changePositive, chart }: any) => {
-  return (
-    <View style={styles.metricCard}>
-      <View style={styles.metricInfo}>
-        <Text style={styles.metricTitle}>{title}</Text>
-        <Text
-          style={
-            changePositive
-              ? styles.metricChangePositive
-              : styles.metricChangeNegative
-          }
-        >
-          {changePositive ? `↑ ${change}` : `↓ ${change}`}
+export default function DashboardScreen() {
+  const renderActivity = (activity) => (
+      <View style={styles.activityItem} key={activity.id}>
+        <Text style={styles.activityIcon}>
+          {activity.type === 'stock_change' ? '📦' : '📍'}
         </Text>
-        <Text style={styles.metricValue}>{value}</Text>
+        <View style={styles.activityContent}>
+          <Text style={styles.activityText}>
+            {activity.action} {activity.quantity} {activity.product} in {activity.location}
+          </Text>
+          <Text style={styles.activityTime}>
+            {moment(activity.timestamp).fromNow()}
+          </Text>
+        </View>
       </View>
-      <View style={styles.chartContainer}>
-        <Svg height="50" width="140">
-          {chart.map((height: any, index: any) => (
-            <Rect
-              key={index}
-              x={5 + index * 15}
-              y={50 - height}
-              width="5"
-              height={height}
-              rx={2}
-              ry={2}
-              fill={index === 5 ? "#000" : "#E0E0E0"}
-            />
-          ))}
-        </Svg>
-      </View>
-    </View>
   );
-};
 
-export default DashboardScreen;
+  return (
+      <ScrollView style={styles.container}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.actionsGrid}>
+            {quickActions.map(action => (
+                <TouchableOpacity
+                    key={action.id}
+                    style={styles.actionCard}
+                    onPress={() => router.push(action.route)}
+                >
+                  <Text style={styles.actionIcon}>{action.icon}</Text>
+                  <Text style={styles.actionTitle}>{action.title}</Text>
+                </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Inventory Overview</Text>
+          <View style={styles.metricsGrid}>
+            {metrics.map(metric => (
+                <View key={metric.id} style={styles.metricCard}>
+                  <Text style={styles.metricTitle}>{metric.title}</Text>
+                  <Text style={styles.metricValue}>{metric.value}</Text>
+                  <Text style={[
+                    styles.metricChange,
+                    metric.positive ? styles.positive : styles.negative
+                  ]}>
+                    {metric.change}
+                  </Text>
+                </View>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          <View style={styles.activityList}>
+            {dummyActivities.map(renderActivity)}
+          </View>
+        </View>
+      </ScrollView>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    gap: 34,
+    backgroundColor: Color.colorWhitesmoke_200
   },
-  // Card
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Color.modeBase00,
-    borderRadius: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    gap: 16,
-    borderWidth: 1,
-    borderColor: Color.modeBase200,
-  },
-  iconContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    height: 50,
-    width: 50,
-  },
-  cardItemIcon: {
-    width: "100%",
-    height: "100%",
-  },
-  textContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: FontSize.textSmFontMedium_size,
-    fontWeight: "600",
-    color: Color.black,
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: FontSize.size_xs,
-    color: Color.colorGray_100,
-    fontFamily: FontFamily.manropeMedium,
-    width: "90%",
-  },
-  //
-  sectionContainer: {
-    gap: 16,
+  section: {
+    padding: 16,
+    marginBottom: 16
   },
   sectionTitle: {
-    fontSize: FontSize.textBaseFontRegular_size,
+    fontSize: 18,
     fontFamily: FontFamily.manropeBold,
-    fontWeight: "bold",
     color: Color.textContentSecondaryDay,
+    marginBottom: 16
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16
+  },
+  actionCard: {
+    width: '30%',
+    aspectRatio: 1,
+    backgroundColor: Color.modeBase00,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: Color.modeBase200
+  },
+  actionIcon: {
+    fontSize: 24,
+    marginBottom: 8
+  },
+  actionTitle: {
+    fontSize: FontSize.size_xs,
+    fontFamily: FontFamily.manropeMedium,
+    textAlign: 'center',
+    color: Color.textContentPrimaryDay
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    gap: 12
   },
   metricCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flex: 1,
     backgroundColor: Color.modeBase00,
     padding: 16,
-    paddingVertical: 13,
-    borderRadius: 8,
+    borderRadius: 12,
+    elevation: 2,
     borderWidth: 1,
-    borderColor: Color.modeBase200,
-  },
-  metricCardBorder: {
-    borderColor: "#007BFF",
-    borderWidth: 1,
-  },
-  metricInfo: {
-    width: "50%",
-    gap: 12,
+    borderColor: Color.modeBase200
   },
   metricTitle: {
-    fontSize: FontSize.textSmFontMedium_size,
-    fontWeight: "700",
-    fontFamily: FontFamily.manropeBold,
-    color: Color.black,
-  },
-  metricChangePositive: {
-    fontSize: FontSize.textSmFontMedium_size,
-    fontFamily: FontFamily.manropeSemiBold,
-    fontWeight: "600",
-    color: "#22C55E",
-  },
-  metricChangeNegative: {
-    fontSize: FontSize.textSmFontMedium_size,
-    fontFamily: FontFamily.manropeSemiBold,
-    fontWeight: "600",
-    color: "#CB0000",
+    fontSize: FontSize.size_xs,
+    fontFamily: FontFamily.manropeMedium,
+    color: Color.textContentSecondaryDay,
+    marginBottom: 8
   },
   metricValue: {
     fontSize: 24,
     fontFamily: FontFamily.manropeBold,
-    fontWeight: "800",
-    color: "@212B36",
+    color: Color.textContentPrimaryDay,
+    marginBottom: 4
   },
-  chartContainer: {
-    alignItems: "flex-end",
-    flex: 1,
-    width: "60%",
-    marginLeft: 16,
+  metricChange: {
+    fontSize: FontSize.size_xs,
+    fontFamily: FontFamily.manropeMedium
   },
-  // Product Card
-  productCard: {
+  positive: {
+    color: '#22C55E'
+  },
+  negative: {
+    color: '#CB0000'
+  },
+  activityList: {
+    backgroundColor: Color.modeBase00,
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: Color.modeBase200
+  },
+  activityItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: Color.modeBase200
   },
-  image: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
-    marginRight: 16,
+  activityIcon: {
+    fontSize: 24,
+    marginRight: 12
   },
-  infoContainer: {
-    flex: 1,
+  activityContent: {
+    flex: 1
   },
-  productTitle: {
-    fontSize: FontSize.textSmFontMedium_size,
-    fontFamily: FontFamily.manropeBold,
-    fontWeight: '700',
-    color: Color.black,
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  units: {
-    fontSize: FontSize.textSmFontMedium_size,
+  activityText: {
+    fontSize: FontSize.size_xs,
     fontFamily: FontFamily.manropeMedium,
-    fontWeight: '500',
-    color: '#848484',
+    color: Color.textContentPrimaryDay
   },
-  revenue: {
-    fontSize: FontSize.textSmFontMedium_size,
-    fontFamily: FontFamily.manropeBold,
-    fontWeight: 'bold',
-    color: '#000',
-  },
+  activityTime: {
+    fontSize: FontSize.size_xs,
+    fontFamily: FontFamily.manropeMedium,
+    color: Color.textContentSecondaryDay,
+    marginTop: 4
+  }
 });
